@@ -1,0 +1,113 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+model User {
+  id String @id @default(cuid())
+  name String
+  email String @unique
+  passwordHash String
+  phone String?
+  address String?
+  city String?
+  role Role @default(CUSTOMER)
+  createdAt DateTime @default(now())
+  orders Order[]
+}
+model Product {
+  id String @id @default(cuid())
+  slug String @unique
+  name String
+  description String
+  price Int
+  weight String @default("250 g")
+  stock Int @default(0)
+  active Boolean @default(false)
+  image String @default("/images/zoorvan-product.png")
+  updatedAt DateTime @updatedAt
+}
+model Order {
+  id String @id @default(cuid())
+  number String @unique
+  userId String?
+  user User? @relation(fields:[userId], references:[id], onDelete:SetNull)
+  name String
+  email String
+  phone String
+  address String
+  city String
+  notes String?
+  items Json
+  subtotal Int
+  shipping Int
+  discount Int @default(0)
+  total Int
+  couponCode String?
+  status OrderStatus @default(PENDING)
+  courier String?
+  trackingNumber String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId, createdAt])
+}
+model Coupon {
+  id String @id @default(cuid())
+  code String @unique
+  percent Int
+  active Boolean @default(true)
+  maxUses Int @default(100)
+  uses Int @default(0)
+  expiresAt DateTime?
+}
+model Review {
+  id String @id @default(cuid())
+  name String
+  rating Int
+  body String
+  approved Boolean @default(false)
+  createdAt DateTime @default(now())
+}
+model Content {
+  id String @id @default(cuid())
+  slug String @unique
+  title String
+  body String
+  published Boolean @default(false)
+}
+model Setting {
+  id String @id @default("store")
+  shipping Int @default(200)
+  freeShippingThreshold Int @default(5000)
+  supportEmail String @default("")
+  whatsapp String @default("")
+  announcement String @default("Cash on delivery across Pakistan")
+}
+model AuditLog {
+  id String @id @default(cuid())
+  actorId String
+  action String
+  detail String
+  createdAt DateTime @default(now())
+}
+model PasswordReset {
+  tokenHash String @id
+  email String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  @@index([email])
+}
