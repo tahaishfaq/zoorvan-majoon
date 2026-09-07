@@ -50,7 +50,7 @@ const fields = {
   staff: [
     ["name", "Full name"],
     ["email", "Email address", "email"],
-    ["password", "Password (at least 12 characters)", "password"],
+    ["password", "Password (at least 8 characters)", "password"],
   ],
 };
 const columns = {

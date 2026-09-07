@@ -46,7 +46,7 @@ const schemas = {
   staff: yup.object({
     name: text.min(2).max(80).required(),
     email: text.email().max(160).required(),
-    password: yup.string().min(12).max(100).required(),
+    password: yup.string().min(8).max(100).required(),
   }),
 };
 const models = {

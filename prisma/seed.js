@@ -21,8 +21,8 @@ try {
     create: { id: "store" },
   });
   if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD) {
-    if (process.env.ADMIN_PASSWORD.length < 12)
-      throw new Error("Admin password must have at least 12 characters.");
+    if (process.env.ADMIN_PASSWORD.length < 8)
+      throw new Error("Admin password must have at least 8 characters.");
     await db.user.upsert({
       where: { email: process.env.ADMIN_EMAIL.toLowerCase() },
       update: {},

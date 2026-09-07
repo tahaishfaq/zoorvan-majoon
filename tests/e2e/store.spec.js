@@ -47,7 +47,9 @@ test("bag persists, preview checkout validates and tracking verifies mobile", as
     page.getByRole("heading", { name: "Your bag is waiting." }),
   ).toBeVisible();
 });
-test("all storefront and preview admin modules resolve", async ({ page }) => {
+test("storefront routes resolve and admin routes require sign-in", async ({
+  page,
+}) => {
   for (const path of [
     "/",
     "/shop",
@@ -82,7 +84,14 @@ test("all storefront and preview admin modules resolve", async ({ page }) => {
     ].map((s) => "/admin" + s),
   ]) {
     const response = await page.goto(path);
-    expect(response.status(), path).toBe(200);
+    if (path.startsWith("/admin")) {
+      await expect(page).toHaveURL(/\/login$/);
+      await expect(
+        page.getByRole("navigation", { name: "Admin navigation" }),
+      ).toHaveCount(0);
+    } else {
+      expect(response.status(), path).toBe(200);
+    }
     await expect(page.locator("h1").first()).toBeVisible();
   }
 });

@@ -16,7 +16,7 @@ export async function PATCH(request) {
       const values = await yup
         .object({
           currentPassword: yup.string().max(100).required(),
-          password: yup.string().min(10).max(100).required(),
+          password: yup.string().min(8).max(100).required(),
         })
         .validate(body, { stripUnknown: true });
       const user = await db.user.findUnique({ where: { id: session.user.id } });

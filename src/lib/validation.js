@@ -27,7 +27,7 @@ export const registerSchema = yup.object({
   email: yup.string().email().max(160).required(),
   password: yup
     .string()
-    .min(10, "Use at least 10 characters.")
+    .min(8, "Use at least 8 characters.")
     .max(100)
     .required(),
 });

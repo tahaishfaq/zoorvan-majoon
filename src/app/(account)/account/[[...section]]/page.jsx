@@ -45,6 +45,7 @@ export default async function Account({ params }) {
     },
   });
   if (!user) redirect("/login");
+  if (user.role === "ADMIN") redirect("/admin");
   const orders = await db.order.findMany({
     where: { userId: user.id },
     orderBy: { createdAt: "desc" },
@@ -71,9 +72,6 @@ export default async function Account({ params }) {
               {label}
             </Link>
           ))}
-          {user.role === "ADMIN" && (
-            <Link href="/admin">Store administration →</Link>
-          )}
           <Logout />
         </aside>
         <div className="dashboard-body">

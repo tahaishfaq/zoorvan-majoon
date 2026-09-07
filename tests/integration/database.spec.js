@@ -17,12 +17,12 @@ const delivery = {
   city: "Lahore",
   quantity: 2,
 };
-async function login(page, email, password) {
+async function login(page, email, password, destination = "/account") {
   await page.goto("/login");
   await page.getByLabel("Email address").fill(email);
   await page.getByLabel("Password", { exact: true }).fill(password);
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
-  await expect(page).toHaveURL(/\/account$/);
+  await expect(page).toHaveURL(new RegExp(`${destination}$`));
 }
 async function post(request, path, data) {
   return request.post(path, { headers: { origin }, data });
@@ -79,7 +79,23 @@ test("real accounts, coupons, order totals, admin controls, inventory races and 
   expect(denied.status()).toBe(403);
   const adminContext = await browser.newContext();
   const admin = await adminContext.newPage();
-  await login(admin, "admin@zoorvan.test", "admin-integration-password");
+  await login(
+    admin,
+    "admin@zoorvan.test",
+    "admin-integration-password",
+    "/admin",
+  );
+  await expect(
+    admin.getByRole("navigation", { name: "Admin navigation" }),
+  ).toBeVisible();
+  await expect(
+    admin.getByRole("navigation", { name: "Main navigation" }),
+  ).toHaveCount(0);
+  await expect(admin.getByRole("contentinfo")).toHaveCount(0);
+  await page.goto("/admin");
+  await expect(page).toHaveURL(/\/account$/);
+  await admin.goto("/account");
+  await expect(admin).toHaveURL(/\/admin$/);
   await admin.goto("/admin/coupons");
   await admin.getByRole("button", { name: "Add coupon" }).click();
   await admin.getByLabel("Coupon code").fill("TEST10");
@@ -125,7 +141,7 @@ test("real accounts, coupons, order totals, admin controls, inventory races and 
   let saved = await db.order.findUnique({ where: { number: order.number } });
   expect(saved.userId).toBeTruthy();
   await page.goto("/account/orders");
-  await expect(page.getByText(order.number, { exact: true })).toBeVisible();
+  await expect(page.locator('.orders-list:visible').getByText(order.number, { exact: true })).toBeVisible();
   const track = await post(page.request, "/api/track", {
     number: order.number,
     phone: delivery.phone,

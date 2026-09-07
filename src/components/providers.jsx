@@ -5,10 +5,15 @@ const StoreContext = createContext(null);
 export function useStore() {
   return useContext(StoreContext);
 }
-export default function Providers({ children, store, session }) {
+export function StoreProvider({ children, store }) {
+  return (
+    <StoreContext.Provider value={store}>{children}</StoreContext.Provider>
+  );
+}
+export default function Providers({ children, session }) {
   return (
     <SessionProvider session={session} refetchOnWindowFocus={false}>
-      <StoreContext.Provider value={store}>{children}</StoreContext.Provider>
+      {children}
     </SessionProvider>
   );
 }

@@ -23,7 +23,7 @@ export async function POST(request) {
           .string()
           .matches(/^[a-f0-9]{64}$/)
           .required(),
-        password: yup.string().min(10).max(100).required(),
+        password: yup.string().min(8).max(100).required(),
       })
       .validate(await request.json(), { stripUnknown: true });
     const tokenHash = createHash("sha256").update(token).digest("hex");

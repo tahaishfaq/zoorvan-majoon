@@ -12,7 +12,7 @@ export default function RecoveryForm({ token }) {
     <>
       <p>
         {reset
-          ? "Choose a new password with at least 10 characters."
+          ? "Choose a new password with at least 8 characters."
           : "Enter your account email. We’ll send a secure link if it matches an account."}
       </p>
       {message ? (
@@ -30,7 +30,7 @@ export default function RecoveryForm({ token }) {
           validationSchema={
             reset
               ? yup.object({
-                  password: yup.string().min(10).max(100).required(),
+                  password: yup.string().min(8).max(100).required(),
                 })
               : yup.object({ email: yup.string().email().required() })
           }

@@ -8,9 +8,6 @@ import "@fontsource/noto-naskh-arabic/400.css";
 import "./globals.css";
 import { connection } from "next/server";
 import Providers from "@/components/providers";
-import Header from "@/components/store/header";
-import Footer from "@/components/store/footer";
-import { getStore } from "@/lib/data";
 import { auth } from "@/auth";
 export const metadata = {
   title: {
@@ -22,18 +19,11 @@ export const metadata = {
 };
 export default async function RootLayout({ children }) {
   await connection();
-  const [store, session] = await Promise.all([getStore(), auth()]);
+  const session = await auth();
   return (
     <html lang="en" data-scroll-behavior="smooth">
       <body>
-        <Providers store={store} session={session}>
-          <a className="skip-link" href="#main">
-            Skip to content
-          </a>
-          <Header />
-          <main id="main">{children}</main>
-          <Footer />
-        </Providers>
+        <Providers session={session}>{children}</Providers>
       </body>
     </html>
   );

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Formik, Form } from "formik";
 import * as yup from "yup";
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import FormField from "./fields";
@@ -65,7 +65,8 @@ export default function AuthForm({ register = false }) {
                 throw new Error(
                   "Unable to sign in. Check your details, or try again later.",
                 );
-              router.push("/account");
+              const session = await getSession();
+              router.push(session?.user?.role === "ADMIN" ? "/admin" : "/account");
               router.refresh();
             } catch (err) {
               setError(err.message);

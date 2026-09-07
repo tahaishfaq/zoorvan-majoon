@@ -17,9 +17,9 @@ npm run dev
 
 Do not copy over an existing `.env`. Generate a secret with `openssl rand -base64 32`. Never commit credentials.
 
-The seed reads `ADMIN_EMAIL` and `ADMIN_PASSWORD` from the environment. The admin password needs at least 12 characters. Existing accounts and product records are not overwritten. Prisma CLI loads `.env`; the seed command uses Node's `--env-file-if-exists=.env` option.
+The seed reads `ADMIN_EMAIL` and `ADMIN_PASSWORD` from the environment. The admin password needs at least 8 characters. Existing accounts and product records are not overwritten. Prisma CLI loads `.env`; the seed command uses Node's `--env-file-if-exists=.env` option.
 
-Open http://localhost:3000. Set `STORE_PREVIEW=true` to try the storefront and read-only admin without touching the configured database. `COMMERCE_ENABLED=false` keeps checkout in explicit demonstration mode even with the database connected.
+Open http://localhost:3000. Set `STORE_PREVIEW=true` to try the storefront without touching the configured database. Admin pages always require an authenticated administrator. `COMMERCE_ENABLED=false` keeps checkout in explicit demonstration mode even with the database connected.
 
 For a fresh database, `db:migrate` applies the committed migrations. An existing database originally created with `db:push` must first be compared with the initial migration and baselined; never reset a database containing store data.
 
@@ -38,6 +38,8 @@ Admin supports order details and fulfilment stages, manual courier references, p
 Customers can save their delivery details, change passwords, view their account's orders, and submit a review after delivery. Approved reviews appear on the product page. Guest orders are not automatically attached to later registrations.
 
 ## Structure
+
+`(admin)/admin/layout.jsx` owns the protected dashboard shell, sidebar and mobile menu. It has no website navbar or footer. Store, auth and customer account route groups share the customer layout, which loads storefront data. The root layout supplies fonts and authentication only. Admins visiting `/account/*` return to `/admin`; customers visiting `/admin/*` return to `/account`.
 
 ```text
 prisma/

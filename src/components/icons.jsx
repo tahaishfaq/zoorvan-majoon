@@ -19,6 +19,7 @@ export {
   LockKey,
   SignOut,
   SquaresFour,
+  Storefront,
   Receipt,
   Users,
   Tag,

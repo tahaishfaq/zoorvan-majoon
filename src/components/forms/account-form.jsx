@@ -31,7 +31,7 @@ export default function AccountForm({ user, password = false }) {
         password
           ? yup.object({
               currentPassword: yup.string().required(),
-              password: yup.string().min(10).max(100).required(),
+              password: yup.string().min(8).max(100).required(),
             })
           : yup.object({
               name: yup.string().min(2).required(),

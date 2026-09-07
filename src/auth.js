@@ -27,6 +27,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           id: user.id,
           name: user.name,
           email: user.email,
+          role: user.role,
           sessionVersion: createHash("sha256")
             .update(user.passwordHash)
             .digest("hex"),
@@ -38,12 +39,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.role = user.role;
         token.sessionVersion = user.sessionVersion;
       } else {
         if (!databaseConfigured || typeof token.id !== "string") return null;
         const current = await db.user.findUnique({
           where: { id: token.id },
-          select: { passwordHash: true, name: true },
+          select: { passwordHash: true, name: true, role: true },
         });
         if (
           !current ||
@@ -52,11 +54,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         )
           return null;
         token.name = current.name;
+        token.role = current.role;
       }
       return token;
     },
     session({ session, token }) {
       session.user.id = token.id;
+      session.user.role = token.role;
       return session;
     },
   },
